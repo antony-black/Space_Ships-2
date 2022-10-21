@@ -20,6 +20,38 @@ class Scene1 extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 32
     });
+    this.load.spritesheet('ship4', 'assets/spritesheets/ship4.png', {
+      frameWidth: 16,
+      frameHeight: 16
+    });
+
+    this.load.spritesheet('ship5', 'assets/spritesheets/ship5.png', {
+      frameWidth: 32,
+      frameHeight: 16
+    });
+
+    this.load.spritesheet('ship6', 'assets/spritesheets/ship6.png', {
+      frameWidth: 32,
+      frameHeight: 32
+    });
+    this.load.spritesheet('ship7', 'assets/spritesheets/ship7.png', {
+      frameWidth: 16,
+      frameHeight: 16
+    });
+
+    this.load.spritesheet('ship8', 'assets/spritesheets/ship8.png', {
+      frameWidth: 32,
+      frameHeight: 16
+    });
+
+    this.load.spritesheet('ship9', 'assets/spritesheets/ship9.png', {
+      frameWidth: 32,
+      frameHeight: 32
+    });
+    this.load.spritesheet('ship10', 'assets/spritesheets/ship10.png', {
+      frameWidth: 16,
+      frameHeight: 16
+    });
 
     this.load.spritesheet('explosion', 'assets/spritesheets/explosion.png', {
       frameWidth: 16,
@@ -70,6 +102,48 @@ class Scene1 extends Phaser.Scene {
     this.anims.create({
       key: 'ship3_anim',
       frames: this.anims.generateFrameNumbers('ship3'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship4_anim',
+      frames: this.anims.generateFrameNumbers('ship4'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship5_anim',
+      frames: this.anims.generateFrameNumbers('ship5'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship6_anim',
+      frames: this.anims.generateFrameNumbers('ship6'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship7_anim',
+      frames: this.anims.generateFrameNumbers('ship7'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship8_anim',
+      frames: this.anims.generateFrameNumbers('ship8'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship9_anim',
+      frames: this.anims.generateFrameNumbers('ship9'),
+      frameRate: 20,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'ship10_anim',
+      frames: this.anims.generateFrameNumbers('ship10'),
       frameRate: 20,
       repeat: -1
     });

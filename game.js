@@ -1,10 +1,10 @@
 let gameSettings = {
-  playerSpeed: 150
+  playerSpeed: 500
 }
 
 const config = {
-  width: 250,
-  height: 272,
+  width: innerWidth,
+  height: innerHeight,
   backgroundColor: 0xff0000,
   scene: [Scene1, Scene2],
   pixelArt: true,

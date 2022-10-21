@@ -12,20 +12,56 @@ class Scene2 extends Phaser.Scene {
     this.ship1 = this.add.sprite(config.width/2, config.height/2, 'ship');
     this.ship2 = this.add.sprite(config.width/2 - 50, config.height/2, 'ship2');
     this.ship3 = this.add.sprite(config.width/2 + 50, config.height/2, 'ship3');
+    this.ship4 = this.add.sprite(config.width/2 + 80, config.height/2, 'ship4');
+    this.ship5 = this.add.sprite(config.width/2 - 150, config.height/2, 'ship5');
+    this.ship6 = this.add.sprite(config.width/2 + 150, config.height/2, 'ship6');
+    this.ship7 = this.add.sprite(config.width/2 - 120, config.height/2, 'ship7');
+    this.ship8 = this.add.sprite(config.width/2 - 250, config.height/2, 'ship8');
+    this.ship9 = this.add.sprite(config.width/2 + 250, config.height/2, 'ship9');
+    this.ship10 = this.add.sprite(config.width/2 + 400, config.height/2, 'ship10');
+
+    // scale enemies
+    this.ship1.setScale(2.5);
+    this.ship2.setScale(2.5);
+    this.ship3.setScale(2);
+    this.ship4.setScale(1.5);
+    this.ship5.setScale(1.5);
+    this.ship6.setScale(1.5);
 
     this.enemies = this.physics.add.group();
     this.enemies.add(this.ship1);
     this.enemies.add(this.ship2);
     this.enemies.add(this.ship3);
+    this.enemies.add(this.ship4);
+    this.enemies.add(this.ship5);
+    this.enemies.add(this.ship6);
+    this.enemies.add(this.ship7);
+    this.enemies.add(this.ship8);
+    this.enemies.add(this.ship9);
+    this.enemies.add(this.ship10);
 
     // run animations
     this.ship1.play('ship1_anim');
     this.ship2.play('ship2_anim');
     this.ship3.play('ship3_anim');
+    this.ship4.play('ship4_anim');
+    this.ship5.play('ship5_anim');
+    this.ship6.play('ship6_anim');
+    this.ship7.play('ship7_anim');
+    this.ship8.play('ship8_anim');
+    this.ship9.play('ship9_anim');
+    this.ship10.play('ship10_anim');
 
     this.ship1.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
+    this.ship4.setInteractive();
+    this.ship5.setInteractive();
+    this.ship6.setInteractive();
+    this.ship6.setInteractive();
+    this.ship6.setInteractive();
+    this.ship6.setInteractive();
+    this.ship6.setInteractive();
     // event on 'ships'/explosion
     this.input.on('gameobjectdown', this.destroyShip, this);
 
@@ -51,6 +87,7 @@ class Scene2 extends Phaser.Scene {
     } 
 
     this.player = this.physics.add.sprite(config.width/2 - 8, config.height/2 + 64, 'player');
+    this.player.setScale(2.5);
     this.player.play('thrust');
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.player.setCollideWorldBounds(true);
@@ -103,6 +140,13 @@ class Scene2 extends Phaser.Scene {
     this.moveShip(this.ship1, 1);
     this.moveShip(this.ship2, 2);
     this.moveShip(this.ship3, 3);
+    this.moveShip(this.ship4, 1);
+    this.moveShip(this.ship5, 2);
+    this.moveShip(this.ship6, 3);
+    this.moveShip(this.ship7, 3);
+    this.moveShip(this.ship8, 1);
+    this.moveShip(this.ship9, 2);
+    this.moveShip(this.ship10, 3);
 
     this.background.tilePositionY -= 0.5;
 
