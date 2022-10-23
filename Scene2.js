@@ -107,13 +107,13 @@ class Scene2 extends Phaser.Scene {
     graphics.beginPath();
     graphics.moveTo(0, 0);
     graphics.lineTo(config.width, 0);
-    graphics.lineTo(config.width, 20);
-    graphics.lineTo(0, 20);
-    graphics.lineTo(0, 20);
+    graphics.lineTo(config.width, 30  );
+    graphics.lineTo(0, 30);
+    graphics.lineTo(0, 30);
     graphics.closePath();
     graphics.fillPath();
     this.score = 0;
-    this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE', 16);
+    this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE', 32);
 
     // add sounds
     this.beamSound = this.sound.add('audio_beam');
@@ -151,6 +151,7 @@ class Scene2 extends Phaser.Scene {
     this.background.tilePositionY -= 0.5;
 
     this.movePlayermanager();
+    // this.movePlayermanagerAlternative();
     // 'JustDown' it's event
     if (Phaser.Input.Keyboard.JustDown(this.spacebar)){
       // call a function to create a beam instance
@@ -197,6 +198,19 @@ class Scene2 extends Phaser.Scene {
       this.player.setVelocity(0);
     }
   }
+  // movePlayermanagerAlternative() {
+  //   if(this.cursorKeys.A.isDown) {
+  //     this.player.setVelocityX(-gameSettings.playerSpeed);
+  //   } else if(this.cursorKeys.D.isDown) {
+  //     this.player.setVelocityX(gameSettings.playerSpeed);
+  //   } else if(this.cursorKeys.W.isDown) {
+  //     this.player.setVelocityY(-gameSettings.playerSpeed);
+  //   }else if(this.cursorKeys.S.isDown) {
+  //     this.player.setVelocityY(gameSettings.playerSpeed);
+  //   } else {
+  //     this.player.setVelocity(0);
+  //   }
+  // }
 
   shootBeam(){
     // add the beam to the group
@@ -273,3 +287,4 @@ class Scene2 extends Phaser.Scene {
     return stringNumber;
   }
 }
+
