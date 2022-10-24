@@ -4,7 +4,7 @@ class Scene2 extends Phaser.Scene {
   }
 
   create() {
-    this.background = this.add.tileSprite(0, 0, config.width, config.height,'background');
+    this.background = this.add.tileSprite(0, 0, config.width, config.height,'background-2');
     this.background.setOrigin(0, 0);
 
     // this.add.text(20, 20, 'Playing game ...', { font: '25px Arial', fill: 'yellow' });
@@ -58,10 +58,10 @@ class Scene2 extends Phaser.Scene {
     this.ship4.setInteractive();
     this.ship5.setInteractive();
     this.ship6.setInteractive();
-    this.ship6.setInteractive();
-    this.ship6.setInteractive();
-    this.ship6.setInteractive();
-    this.ship6.setInteractive();
+    this.ship7.setInteractive();
+    this.ship8.setInteractive();
+    this.ship9.setInteractive();
+    this.ship10.setInteractive();
     // event on 'ships'/explosion
     this.input.on('gameobjectdown', this.destroyShip, this);
 

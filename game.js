@@ -1,4 +1,4 @@
-let gameSettings = {
+const gameSettings = {
   playerSpeed: 500
 }
 
@@ -15,6 +15,10 @@ const config = {
     }
   }
 }
+
+window.addEventListener('resize', () => {
+  window.location.reload();
+})
 
 
 
