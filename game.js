@@ -5,6 +5,7 @@ const gameSettings = {
 const config = {
   
   backgroundColor: 0xff0000,
+  // !The changing we are made
   scale: { 
   mode: Phaser.Scale.ScaleModes.RESIZE,
   width: innerWidth,

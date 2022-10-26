@@ -142,7 +142,7 @@ class Scene2 extends Phaser.Scene {
     }
     this.music.play(musicConfig);
 
-    // !The changing that we are made
+    // !The changing we are made
     // this.scale.on(Phaser.Scale.Events.RESIZE, () => {
     //   this.background.setSize(this.renderer.width, this.renderer.height);
     // })
