@@ -4,21 +4,28 @@ class Scene2 extends Phaser.Scene {
   }
 
   create() {
-    this.background = this.add.tileSprite(0, 0, config.width, config.height,'background-2');
+    this.background = this.add.tileSprite(0, 0, this.renderer.width, this.renderer.height,'background');
     this.background.setOrigin(0, 0);
+    this.background.setDepth(0);
 
     // this.add.text(20, 20, 'Playing game ...', { font: '25px Arial', fill: 'yellow' });
 
-    this.ship1 = this.add.sprite(config.width/2, config.height/2, 'ship');
-    this.ship2 = this.add.sprite(config.width/2 - 50, config.height/2, 'ship2');
-    this.ship3 = this.add.sprite(config.width/2 + 50, config.height/2, 'ship3');
-    this.ship4 = this.add.sprite(config.width/2 + 80, config.height/2, 'ship4');
-    this.ship5 = this.add.sprite(config.width/2 - 150, config.height/2, 'ship5');
-    this.ship6 = this.add.sprite(config.width/2 + 150, config.height/2, 'ship6');
-    this.ship7 = this.add.sprite(config.width/2 - 120, config.height/2, 'ship7');
-    this.ship8 = this.add.sprite(config.width/2 - 250, config.height/2, 'ship8');
-    this.ship9 = this.add.sprite(config.width/2 + 250, config.height/2, 'ship9');
-    this.ship10 = this.add.sprite(config.width/2 + 400, config.height/2, 'ship10');
+    const WIDTH = this.renderer.width;
+    const HEIGHT = this.renderer.height;
+    // const WIDTH = config.width;
+    // const HEIGHT = config.height;
+
+    // !Create a loop
+    this.ship1 = this.add.sprite(WIDTH/2, HEIGHT/2, 'ship');
+    this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT/2, 'ship2');
+    this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT/2, 'ship3');
+    this.ship4 = this.add.sprite(WIDTH/2 + 80, HEIGHT/2, 'ship4');
+    this.ship5 = this.add.sprite(WIDTH/2 - 150, HEIGHT/2, 'ship5');
+    this.ship6 = this.add.sprite(WIDTH/2 + 150, HEIGHT/2, 'ship6');
+    this.ship7 = this.add.sprite(WIDTH/2 - 120, HEIGHT/2, 'ship7');
+    this.ship8 = this.add.sprite(WIDTH/2 - 250, HEIGHT/2, 'ship8');
+    this.ship9 = this.add.sprite(WIDTH/2 + 250, HEIGHT/2, 'ship9');
+    this.ship10 = this.add.sprite(WIDTH/2 + 400, HEIGHT/2, 'ship10');
 
     // scale enemies
     this.ship1.setScale(2.5);
@@ -28,6 +35,7 @@ class Scene2 extends Phaser.Scene {
     this.ship5.setScale(1.5);
     this.ship6.setScale(1.5);
 
+    // !Create a loop
     this.enemies = this.physics.add.group();
     this.enemies.add(this.ship1);
     this.enemies.add(this.ship2);
@@ -40,6 +48,7 @@ class Scene2 extends Phaser.Scene {
     this.enemies.add(this.ship9);
     this.enemies.add(this.ship10);
 
+    // !Create a loop
     // run animations
     this.ship1.play('ship1_anim');
     this.ship2.play('ship2_anim');
@@ -52,6 +61,7 @@ class Scene2 extends Phaser.Scene {
     this.ship9.play('ship9_anim');
     this.ship10.play('ship10_anim');
 
+    // !Create a loop
     this.ship1.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
@@ -86,7 +96,7 @@ class Scene2 extends Phaser.Scene {
     powerUp.setBounce(1);
     } 
 
-    this.player = this.physics.add.sprite(config.width/2 - 8, config.height/2 + 64, 'player');
+    this.player = this.physics.add.sprite(WIDTH/2 - 8, HEIGHT/2 + 64, 'player');
     this.player.setScale(2.5);
     this.player.play('thrust');
     this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -106,8 +116,8 @@ class Scene2 extends Phaser.Scene {
     graphics.fillStyle(0x000000, 1);
     graphics.beginPath();
     graphics.moveTo(0, 0);
-    graphics.lineTo(config.width, 0);
-    graphics.lineTo(config.width, 30  );
+    graphics.lineTo(WIDTH, 0);
+    graphics.lineTo(WIDTH, 30);
     graphics.lineTo(0, 30);
     graphics.lineTo(0, 30);
     graphics.closePath();
@@ -123,7 +133,7 @@ class Scene2 extends Phaser.Scene {
     
     const musicConfig = {
       mute: false,
-      volume: 1,
+      volume: 0,
       rate: 1,
       detune: 0,
       seek: 0,
@@ -131,6 +141,11 @@ class Scene2 extends Phaser.Scene {
       delay: 0
     }
     this.music.play(musicConfig);
+
+    // !The changing that we are made
+    // this.scale.on(Phaser.Scale.Events.RESIZE, () => {
+    //   this.background.setSize(this.renderer.width, this.renderer.height);
+    // })
   }
 
 
@@ -198,19 +213,6 @@ class Scene2 extends Phaser.Scene {
       this.player.setVelocity(0);
     }
   }
-  // movePlayermanagerAlternative() {
-  //   if(this.cursorKeys.A.isDown) {
-  //     this.player.setVelocityX(-gameSettings.playerSpeed);
-  //   } else if(this.cursorKeys.D.isDown) {
-  //     this.player.setVelocityX(gameSettings.playerSpeed);
-  //   } else if(this.cursorKeys.W.isDown) {
-  //     this.player.setVelocityY(-gameSettings.playerSpeed);
-  //   }else if(this.cursorKeys.S.isDown) {
-  //     this.player.setVelocityY(gameSettings.playerSpeed);
-  //   } else {
-  //     this.player.setVelocity(0);
-  //   }
-  // }
 
   shootBeam(){
     // add the beam to the group
@@ -247,15 +249,15 @@ class Scene2 extends Phaser.Scene {
   }
   // restart player
   resetPlayer() {
-    let x = config.width / 2 - 8;
-    let y = config.height + 64;
+    let x = WIDTH / 2 - 8;
+    let y = HEIGHT + 64;
     this.player.enableBody(true, x, y, true, true);
     // makes 'player' transparent
     this.player.alpha = 0.5;
     // move the ship from outside the screen to its original position
     const tween = this.tweens.add({
       targets: this.player,
-      y: config.height - 64,
+      y: HEIGHT - 64,
       ease: 'Power1',
       duration: 1500,
       repeat: 0,

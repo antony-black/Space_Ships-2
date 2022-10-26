@@ -3,9 +3,13 @@ const gameSettings = {
 }
 
 const config = {
+  
+  backgroundColor: 0xff0000,
+  scale: { 
+  mode: Phaser.Scale.ScaleModes.RESIZE,
   width: innerWidth,
   height: innerHeight,
-  backgroundColor: 0xff0000,
+ },
   scene: [Scene1, Scene2],
   pixelArt: true,
   physics: {
@@ -16,9 +20,6 @@ const config = {
   }
 }
 
-window.addEventListener('resize', () => {
-  window.location.reload();
-})
 
 
 

@@ -4,7 +4,10 @@ class Scene1 extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('background-2', 'assets/background-2.png');
+    // this.load.image('background', 'assets/background.png');
+    // this.load.image('background', 'assets/RedPlanet.png');
+    this.load.image('background', 'assets/OGA-Background-1.png');
+    // this.load.image('background', 'assets/bg5.jpg')
 
     this.load.spritesheet('ship', 'assets/spritesheets/ship.png', {
       frameWidth: 16,
