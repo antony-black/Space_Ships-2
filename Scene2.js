@@ -4,22 +4,32 @@ class Scene2 extends Phaser.Scene {
   }
 
   create() {
-    this.background = this.add.tileSprite(0, 0, config.width, config.height,'background-2');
+    this.background = this.add.tileSprite(0, 0, config.width, config.height,'background');
     this.background.setOrigin(0, 0);
 
     // this.add.text(20, 20, 'Playing game ...', { font: '25px Arial', fill: 'yellow' });
 
-    this.ship1 = this.add.sprite(config.width/2, config.height/2, 'ship');
-    this.ship2 = this.add.sprite(config.width/2 - 50, config.height/2, 'ship2');
-    this.ship3 = this.add.sprite(config.width/2 + 50, config.height/2, 'ship3');
-    this.ship4 = this.add.sprite(config.width/2 + 80, config.height/2, 'ship4');
-    this.ship5 = this.add.sprite(config.width/2 - 150, config.height/2, 'ship5');
-    this.ship6 = this.add.sprite(config.width/2 + 150, config.height/2, 'ship6');
-    this.ship7 = this.add.sprite(config.width/2 - 120, config.height/2, 'ship7');
-    this.ship8 = this.add.sprite(config.width/2 - 250, config.height/2, 'ship8');
-    this.ship9 = this.add.sprite(config.width/2 + 250, config.height/2, 'ship9');
-    this.ship10 = this.add.sprite(config.width/2 + 400, config.height/2, 'ship10');
+    const WIDTH = this.renderer.width;
+    const HEIGHT = this.renderer.height;
 
+    // const ships = [
+    //   'ship', 'ship2', 'ship3', 'ship4', 'ship5', 
+    //   'ship6', 'ship7', 'ship8', 'ship9', 'ship10'
+    // ]
+
+// !Create a loop
+    this.ship1 = this.add.sprite(WIDTH/2, HEIGHT/2, 'ship');
+    this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT/2, 'ship2');
+    this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT/2, 'ship3');
+    this.ship4 = this.add.sprite(WIDTH/2 + 80, HEIGHT/2, 'ship4');
+    this.ship5 = this.add.sprite(WIDTH/2 - 150, HEIGHT/2, 'ship5');
+    this.ship6 = this.add.sprite(WIDTH/2 + 150, HEIGHT/2, 'ship6');
+    this.ship7 = this.add.sprite(WIDTH/2 - 120, HEIGHT/2, 'ship7');
+    this.ship8 = this.add.sprite(WIDTH/2 - 250, HEIGHT/2, 'ship8');
+    this.ship9 = this.add.sprite(WIDTH/2 + 250, HEIGHT/2, 'ship9');
+    this.ship10 = this.add.sprite(WIDTH/2 + 400, HEIGHT/2, 'ship10');
+
+    // !Create a loop
     // scale enemies
     this.ship1.setScale(2.5);
     this.ship2.setScale(2.5);
@@ -28,6 +38,7 @@ class Scene2 extends Phaser.Scene {
     this.ship5.setScale(1.5);
     this.ship6.setScale(1.5);
 
+    // !Create a loop
     this.enemies = this.physics.add.group();
     this.enemies.add(this.ship1);
     this.enemies.add(this.ship2);
@@ -40,6 +51,7 @@ class Scene2 extends Phaser.Scene {
     this.enemies.add(this.ship9);
     this.enemies.add(this.ship10);
 
+    // !Create a loop
     // run animations
     this.ship1.play('ship1_anim');
     this.ship2.play('ship2_anim');
@@ -52,6 +64,7 @@ class Scene2 extends Phaser.Scene {
     this.ship9.play('ship9_anim');
     this.ship10.play('ship10_anim');
 
+    // !Create a loop
     this.ship1.setInteractive();
     this.ship2.setInteractive();
     this.ship3.setInteractive();
