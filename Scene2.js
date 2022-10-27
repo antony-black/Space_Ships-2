@@ -17,7 +17,7 @@ class Scene2 extends Phaser.Scene {
     //   'ship6', 'ship7', 'ship8', 'ship9', 'ship10'
     // ]
 
-// !Create a loop
+// !Create a loop  
     this.ship1 = this.add.sprite(WIDTH/2, HEIGHT/2, 'ship');
     this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT/2, 'ship2');
     this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT/2, 'ship3');
@@ -98,22 +98,58 @@ class Scene2 extends Phaser.Scene {
     powerUp.setCollideWorldBounds(true);
     powerUp.setBounce(1);
     } 
-
-    this.player = this.physics.add.sprite(config.width/2 - 8, config.height/2 + 64, 'player');
+    // The first player settings
+    this.player = this.physics.add.sprite(WIDTH/2 + 300, HEIGHT/2 + 300, 'player');
     this.player.setScale(2.5);
     this.player.play('thrust');
-    this.cursorKeys = this.input.keyboard.createCursorKeys();
-    this.player.setCollideWorldBounds(true);
 
+    // Keyboard settings 'player'
+    this.cursorKeys = this.input.keyboard.createCursorKeys();
+    this.player.setBounce(0.5);
+    this.player.setCollideWorldBounds(true);
+ 
+    // The second player settings
+    this.player2 = this.physics.add.sprite(WIDTH/2 - 300, HEIGHT/2 + 300, 'player')
+    this.player2.setScale(2.5);
+    this.player2.play('thrust');
+    this.player2.setBounce(0.5);
+    this.player2.setCollideWorldBounds(true);
+
+  // Keyboard settings 'player2'
+  this.controls = [
+    this.key_A = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
+    this.key_D = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+    this.key_W = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
+    this.key_S = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
+  ]; 
+  // Collision between 'players'
+  this.physics.add.collider(this.player, this.player2);
+
+    // Fire button 'player'
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    // Fire button 'player2'
+    this.key_ALT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ALT);
+
+    //Missiles group
     this.missiles = this.add.group();
-    this.physics.add.collider(this.missiles, this.powerUps, function (missile, powerUp) {
+
+    // The first player overlaps
+    this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, null, this);
+    this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, null, this);
+
+    // The second player overlaps
+    this.physics.add.overlap(this.player2, this.powerUps, this.pickPowerUp, null, this);
+    this.physics.add.overlap(this.player2, this.enemies, this.hurtPlayer2, null, this);
+
+     // Destroy missiles by powerUps
+     this.physics.add.collider(this.missiles, this.powerUps, function (missile, powerUp) {
       missile.destroy();
     });
-    this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, null, this);
-
-    this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, null, this);
+    
+    // Missiles destroy enemies
     this.physics.add.overlap(this.missiles, this.enemies, this.hitEnemies, null, this);
+
 
     let graphics = this.add.graphics();
     graphics.fillStyle(0x000000, 1);
@@ -128,7 +164,7 @@ class Scene2 extends Phaser.Scene {
     this.score = 0;
     this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE', 32);
 
-    // add sounds
+    // Add sounds
     this.beamSound = this.sound.add('audio_beam');
     this.explosionSound = this.sound.add('audio_explosion');
     this.pickupSound = this.sound.add('audio_pickup');
@@ -136,7 +172,7 @@ class Scene2 extends Phaser.Scene {
     
     const musicConfig = {
       mute: false,
-      volume: 1,
+      volume: 0,
       rate: 1,
       detune: 0,
       seek: 0,
@@ -145,9 +181,6 @@ class Scene2 extends Phaser.Scene {
     }
     this.music.play(musicConfig);
   }
-
-
-
 
   update() {
     this.moveShip(this.ship1, 1);
@@ -161,22 +194,36 @@ class Scene2 extends Phaser.Scene {
     this.moveShip(this.ship9, 2);
     this.moveShip(this.ship10, 3);
 
+
     this.background.tilePositionY -= 0.5;
 
     this.movePlayermanager();
-    // this.movePlayermanagerAlternative();
+
+    this.movePlayermanagerAlternative();
+
+    // Fire settings 'player'
     // 'JustDown' it's event
-    if (Phaser.Input.Keyboard.JustDown(this.spacebar)){
+    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
       // call a function to create a beam instance
       // this.shootBeam();
       if(this.player.active) {
         this.shootBeam();
       }
-
-      for(let i = 0; i < this.missiles.getChildren().length; i++) {
+      for (let i = 0; i < this.missiles.getChildren().length; i++) {
         let beam = this.missiles.getChildren()[i];
         beam.update();
       }
+  }
+
+  // Fire settings 'player2'
+  if (Phaser.Input.Keyboard.JustDown(this.key_ALT)) {
+    if (this.player2.active) {
+      this.shootBeam2();
+    }
+    for (let i = 0; i < this.missiles.getChildren().length; i++) {
+      let beam2 = this.missiles.getChildren()[i];
+      beam2.update();
+    }
   }
   }
 
@@ -198,6 +245,7 @@ class Scene2 extends Phaser.Scene {
     gameObject.play('explode');
   }
 
+// Keyboard settings 'player'
   movePlayermanager() {
     if(this.cursorKeys.left.isDown) {
       this.player.setVelocityX(-gameSettings.playerSpeed);
@@ -211,24 +259,38 @@ class Scene2 extends Phaser.Scene {
       this.player.setVelocity(0);
     }
   }
-  // movePlayermanagerAlternative() {
-  //   if(this.cursorKeys.A.isDown) {
-  //     this.player.setVelocityX(-gameSettings.playerSpeed);
-  //   } else if(this.cursorKeys.D.isDown) {
-  //     this.player.setVelocityX(gameSettings.playerSpeed);
-  //   } else if(this.cursorKeys.W.isDown) {
-  //     this.player.setVelocityY(-gameSettings.playerSpeed);
-  //   }else if(this.cursorKeys.S.isDown) {
-  //     this.player.setVelocityY(gameSettings.playerSpeed);
-  //   } else {
-  //     this.player.setVelocity(0);
-  //   }
-  // }
-
+// Keyboard settings 'player2'
+  movePlayermanagerAlternative() {
+    if(this.key_W.isDown) {
+      this.player2.setVelocityY(-gameSettings.playerSpeed);
+    }
+    else if(this.key_S.isDown){
+      this.player2.setVelocityY(gameSettings.playerSpeed);
+    }
+    else if(this.key_A.isDown){
+      this.player2.setVelocityX(-gameSettings.playerSpeed);
+    }
+    else if(this.key_D.isDown){
+      this.player2.setVelocityX(gameSettings.playerSpeed);
+    }
+    else {
+      this.player2.setVelocity(0);
+    }
+  }
+// 'player' fire function
   shootBeam(){
     // add the beam to the group
     console.log('Fire');
     const beam = new Beam(this);
+    const beamDouble = new BeamDouble(this);
+    this.beamSound.play();  
+  }
+// 'player2' fire function
+  shootBeam2(){
+    // add the beam to the group
+    console.log('Fire2');
+    const beam2 = new Beam2(this);
+    const beamDouble2 = new BeamDouble2(this);
     this.beamSound.play();  
   }
 
@@ -236,7 +298,7 @@ class Scene2 extends Phaser.Scene {
     powerUp.disableBody(true, true);
     this.pickupSound.play();
   }
-
+// 'Player' demage
   hurtPlayer(player, enemy) {
     // player.x = config.width/2 - 8;
     // player.y = config.height - 64;
@@ -245,7 +307,7 @@ class Scene2 extends Phaser.Scene {
     // don't hurt 'player' if it is invisible
     if(this.player.alpha < 1) {
       return
-    }
+    } 
     // run an explosion animation
     const explosion = new Explosion(this, player.x, player.y);
     // disables 'player' & hide it
@@ -258,16 +320,40 @@ class Scene2 extends Phaser.Scene {
       loop: false
     })
   }
-  // restart player
+
+// 'Player2' demage
+  hurtPlayer2(player, enemy) {
+    this.explosionSound.play();
+    this.resetShipPos(enemy);
+    // don't hurt 'player' if it is invisible
+    if(this.player2.alpha < 1) {
+      return
+    } 
+    // run an explosion animation
+    const explosion = new Explosion(this, player.x, player.y);
+    // disables 'player' & hide it
+    player.disableBody(true, true);
+    // this.resetPlayer();
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer2,
+      callbackScope: this,
+      loop: false
+    })
+  }
+  // Restart 'player'
   resetPlayer() {
-    let x = config.width / 2 - 8;
+    let x = config.width / 2 + 300;
     let y = config.height + 64;
+
     this.player.enableBody(true, x, y, true, true);
+
     // makes 'player' transparent
     this.player.alpha = 0.5;
+
     // move the ship from outside the screen to its original position
     const tween = this.tweens.add({
-      targets: this.player,
+      targets:this.player,
       y: config.height - 64,
       ease: 'Power1',
       duration: 1500,
@@ -276,7 +362,30 @@ class Scene2 extends Phaser.Scene {
         this.player.alpha = 1;
       },
       callbackScope: this
-    })
+    });
+  }
+ // Restart 'player2'
+  resetPlayer2() {
+    let x = config.width / 2 - 300;
+    let y = config.height + 64;
+
+    this.player2.enableBody(true, x, y, true, true);
+
+    // makes 'player' transparent
+    this.player2.alpha = 0.5;
+
+    // move the ship from outside the screen to its original position
+    const tween2 = this.tweens.add({
+      targets:this.player2,
+      y: config.height - 64,
+      ease: 'Power1',
+      duration: 1500,
+      repeat: 0,
+      onComplete: function() {
+        this.player2.alpha = 1;
+      },
+      callbackScope: this
+    });
   }
 
   hitEnemies(missile, enemy) {

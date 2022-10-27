@@ -1,6 +1,6 @@
 class Beam extends Phaser.GameObjects.Sprite {
     constructor(scene){
-      let x = scene.player.x;
+      let x = scene.player.x + 20;
       let y = scene.player.y - 16;
 
       super(scene, x, y, "beam");
@@ -8,7 +8,7 @@ class Beam extends Phaser.GameObjects.Sprite {
 
       this.play('beam_anim');
       scene.physics.world.enableBody(this);
-      this.body.velocity.y = -250;
+      this.body.velocity.y = -850;
 
       scene.missiles.add(this);
     }
