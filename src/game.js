@@ -6,7 +6,7 @@ const config = {
   width: innerWidth,
   height: innerHeight,
   backgroundColor: 0xff0000,
-  scene: [Scene1, Scene2],
+  scene: [Scene1, Scene2, GameOver],
   pixelArt: true,
   physics: {
     default: 'arcade',

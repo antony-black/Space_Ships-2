@@ -1,6 +1,9 @@
 class Scene2 extends Phaser.Scene {
   constructor() {
     super('playGame');
+
+    this.resetCounter = 0;
+    this.resetCounter2 = 0;
   }
 
   create() {
@@ -17,7 +20,7 @@ class Scene2 extends Phaser.Scene {
     //   'ship6', 'ship7', 'ship8', 'ship9', 'ship10'
     // ]
 
-// !Create a loop  
+// !Create a loop
     this.ship1 = this.add.sprite(WIDTH/2, HEIGHT/2, 'ship');
     this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT/2, 'ship2');
     this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT/2, 'ship3');
@@ -156,8 +159,8 @@ class Scene2 extends Phaser.Scene {
     graphics.beginPath();
     graphics.moveTo(0, 0);
     graphics.lineTo(WIDTH, 0);
-    graphics.lineTo(WIDTH, 90  );
-    graphics.lineTo(0, 90);
+    graphics.lineTo(WIDTH, 30);
+    graphics.lineTo(0, 30);
     graphics.closePath();
     graphics.fillPath();
 
@@ -167,8 +170,9 @@ class Scene2 extends Phaser.Scene {
     // this.livesPlayer3 = 4;
 
     this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE: 0', 32);
-    this.livesLabel = this.add.bitmapText(10, 30, 'pixelFont', 'PLAYER-1: 4', 32);
-    this.livesLabel2 = this.add.bitmapText(10, 55, 'pixelFont', 'PLAYER-2: 4', 32);
+    this.livesText = this.add.bitmapText(10, 45, 'pixelFont', 'LIVES:', 32);
+    this.livesLabel = this.add.bitmapText(10, 75, 'pixelFont', 'PLAYER-1: 4', 32);
+    this.livesLabel2 = this.add.bitmapText(10, 105, 'pixelFont', 'PLAYER-2: 4', 32);
     // this.livesLabel3 = this.add.bitmapText(10, 85, 'pixelFont', 'PLAYER-3: 4', 32);
 
     // Add sounds
@@ -209,30 +213,12 @@ class Scene2 extends Phaser.Scene {
 
     this.movePlayermanagerAlternative();
 
-    // Fire settings 'player'
-    // 'JustDown' it's event
-    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-      // call a function to create a beam instance
-      // this.shootBeam();
-      if(this.player.active) {
-        this.shootBeam();
-      }
-      for (let i = 0; i < this.missiles.getChildren().length; i++) {
-        let beam = this.missiles.getChildren()[i];
-        beam.update();
-      }
-  }
+  // Fire function 'player'
+    this.getFire1();
+  // Fire function 'player'
+    this.getFire2();
 
-  // Fire settings 'player2'
-  if (Phaser.Input.Keyboard.JustDown(this.key_ALT)) {
-    if (this.player2.active) {
-      this.shootBeam2();
-    }
-    for (let i = 0; i < this.missiles.getChildren().length; i++) {
-      let beam2 = this.missiles.getChildren()[i];
-      beam2.update();
-    }
-  }
+  this.setGameOver();
   }
 
   resetShipPos(ship) {
@@ -267,6 +253,21 @@ class Scene2 extends Phaser.Scene {
       this.player.setVelocity(0);
     }
   }
+   // Fire settings 'player'
+    // 'JustDown' it's event
+    getFire1(){
+      if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+        // call a function to create a beam instance
+        // this.shootBeam();
+        if(this.player.active) {
+          this.shootBeam();
+        }
+        for (let i = 0; i < this.missiles.getChildren().length; i++) {
+          let beam = this.missiles.getChildren()[i];
+          beam.update();
+        }
+    }
+    }
 // Keyboard settings 'player2'
   movePlayermanagerAlternative() {
     if(this.key_W.isDown) {
@@ -285,6 +286,18 @@ class Scene2 extends Phaser.Scene {
       this.player2.setVelocity(0);
     }
   }
+   // Fire settings 'player2'
+   getFire2(){
+    if (Phaser.Input.Keyboard.JustDown(this.key_ALT)) {
+      if (this.player2.active) {
+        this.shootBeam2();
+      }
+      for (let i = 0; i < this.missiles.getChildren().length; i++) {
+        let beam2 = this.missiles.getChildren()[i];
+        beam2.update();
+      }
+    }
+   }
 // 'player' fire function
   shootBeam(){
     // add the beam to the group
@@ -330,8 +343,7 @@ class Scene2 extends Phaser.Scene {
     });
 
     // 'player' lives
-    this.livesPlayer--;
-    this.livesLabel.text = 'PLAYER-1: ' + this.livesPlayer;
+    this.getLives();
   }
 // 'player2' demage
   hurtPlayer2(player, enemy) {
@@ -352,56 +364,78 @@ class Scene2 extends Phaser.Scene {
       callbackScope: this,
       loop: false
     });
-
-    // 'player2' lives
-    this.livesPlayer2 -= 1;
-    this.livesLabel2.text = 'PLAYER-2: ' + this.livesPlayer2;
+      // 'player2' lives
+       this.getLives2();
   }
+
   // Restart 'player'
   resetPlayer() {
-    let x = config.width / 2 + 300;
-    let y = config.height + 64;
+     // 'player' disabled
+     this.resetCounter ++;
 
-    this.player.enableBody(true, x, y, true, true);
+     if (this.resetCounter !== 2) {
+       console.log('OK');
 
-    // makes 'player' transparent
-    this.player.alpha = 0.5;
+       let x = config.width / 2 + 300;
+       let y = config.height + 64;
+   
+       this.player.enableBody(true, x, y, true, true);
+   
+       // makes 'player' transparent
+       this.player.alpha = 0.5;
+   
+       // move the ship from outside the screen to its original position
+       const tween = this.tweens.add({
+         targets:this.player,
+         y: config.height - 64,
+         ease: 'Power1',
+         duration: 1500,
+         repeat: 0,
+         onComplete: function() {
+           this.player.alpha = 1;
+         },
+         callbackScope: this
+       });
 
-    // move the ship from outside the screen to its original position
-    const tween = this.tweens.add({
-      targets:this.player,
-      y: config.height - 64,
-      ease: 'Power1',
-      duration: 1500,
-      repeat: 0,
-      onComplete: function() {
-        this.player.alpha = 1;
-      },
-      callbackScope: this
-    });
+     } else {
+      console.log('GameOver');
+      return;
+     }
   }
+
  // Restart 'player2'
   resetPlayer2() {
-    let x = config.width / 2 - 300;
-    let y = config.height + 64;
+     // 'player' disabled
+     this.resetCounter2 ++;
 
-    this.player2.enableBody(true, x, y, true, true);
+     if (this.resetCounter2 !== 2) {
+       console.log('OK');
 
-    // makes 'player' transparent
-    this.player2.alpha = 0.5;
+       let x = config.width / 2 - 300;
+       let y = config.height + 64;
+   
+       this.player2.enableBody(true, x, y, true, true);
+   
+       // makes 'player' transparent
+       this.player2.alpha = 0.5;
+   
+       // move the ship from outside the screen to its original position
+       const tween = this.tweens.add({
+         targets:this.player2,
+         y: config.height - 64,
+         ease: 'Power1',
+         duration: 1500,
+         repeat: 0,
+         onComplete: function() {
+           this.player2.alpha = 1;
+         },
+         callbackScope: this
+       });
 
-    // move the ship from outside the screen to its original position
-    const tween2 = this.tweens.add({
-      targets:this.player2,
-      y: config.height - 64,
-      ease: 'Power1',
-      duration: 1500,
-      repeat: 0,
-      onComplete: function() {
-        this.player2.alpha = 1;
-      },
-      callbackScope: this
-    });
+     } else {
+      console.log('GameOver');
+      return;
+     }
   }
 
   hitEnemies(missile, enemy) {
@@ -423,6 +457,22 @@ class Scene2 extends Phaser.Scene {
       stringNumber = '0' + stringNumber;
     }
     return stringNumber;
+  }
+
+  getLives(){
+    this.livesPlayer -= 1;
+    this.livesLabel.text = 'PLAYER-1: ' + this.livesPlayer;
+  }  
+  getLives2(){
+    this.livesPlayer2 -= 1;
+    this.livesLabel2.text = 'PLAYER-2: ' + this.livesPlayer2;
+  }  
+  // Run 'GameOver'
+  setGameOver() {
+    if (this.resetCounter && this.resetCounter2 === 2) {
+      console.log('setGameOver >>> working');
+      this.scene.start('GameOver');
+    }
   }
 }
 
