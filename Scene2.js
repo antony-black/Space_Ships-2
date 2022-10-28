@@ -150,26 +150,34 @@ class Scene2 extends Phaser.Scene {
     // Missiles destroy enemies
     this.physics.add.overlap(this.missiles, this.enemies, this.hitEnemies, null, this);
 
-
+    // Add 'SCORE'
     let graphics = this.add.graphics();
     graphics.fillStyle(0x000000, 1);
     graphics.beginPath();
     graphics.moveTo(0, 0);
-    graphics.lineTo(config.width, 0);
-    graphics.lineTo(config.width, 30  );
-    graphics.lineTo(0, 30);
-    graphics.lineTo(0, 30);
+    graphics.lineTo(WIDTH, 0);
+    graphics.lineTo(WIDTH, 90  );
+    graphics.lineTo(0, 90);
     graphics.closePath();
     graphics.fillPath();
+
     this.score = 0;
-    this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE', 32);
+    this.livesPlayer = 4;
+    this.livesPlayer2 = 4;
+    // this.livesPlayer3 = 4;
+
+    this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE: 0', 32);
+    this.livesLabel = this.add.bitmapText(10, 30, 'pixelFont', 'PLAYER-1: 4', 32);
+    this.livesLabel2 = this.add.bitmapText(10, 55, 'pixelFont', 'PLAYER-2: 4', 32);
+    // this.livesLabel3 = this.add.bitmapText(10, 85, 'pixelFont', 'PLAYER-3: 4', 32);
 
     // Add sounds
     this.beamSound = this.sound.add('audio_beam');
     this.explosionSound = this.sound.add('audio_explosion');
     this.pickupSound = this.sound.add('audio_pickup');
     this.music = this.sound.add('music');
-    
+
+    // Add background music
     const musicConfig = {
       mute: false,
       volume: 0,
@@ -298,11 +306,12 @@ class Scene2 extends Phaser.Scene {
     powerUp.disableBody(true, true);
     this.pickupSound.play();
   }
-// 'Player' demage
+// 'player' demage
   hurtPlayer(player, enemy) {
     // player.x = config.width/2 - 8;
     // player.y = config.height - 64;
     this.explosionSound.play();
+
     this.resetShipPos(enemy);
     // don't hurt 'player' if it is invisible
     if(this.player.alpha < 1) {
@@ -318,10 +327,13 @@ class Scene2 extends Phaser.Scene {
       callback: this.resetPlayer,
       callbackScope: this,
       loop: false
-    })
-  }
+    });
 
-// 'Player2' demage
+    // 'player' lives
+    this.livesPlayer--;
+    this.livesLabel.text = 'PLAYER-1: ' + this.livesPlayer;
+  }
+// 'player2' demage
   hurtPlayer2(player, enemy) {
     this.explosionSound.play();
     this.resetShipPos(enemy);
@@ -339,7 +351,11 @@ class Scene2 extends Phaser.Scene {
       callback: this.resetPlayer2,
       callbackScope: this,
       loop: false
-    })
+    });
+
+    // 'player2' lives
+    this.livesPlayer2 -= 1;
+    this.livesLabel2.text = 'PLAYER-2: ' + this.livesPlayer2;
   }
   // Restart 'player'
   resetPlayer() {
@@ -397,7 +413,7 @@ class Scene2 extends Phaser.Scene {
     this.score += 15;
     // this.scoreLabel.text = 'SCORE ' + this.score;
     const scoreFormated = this.zeroPad(this.score, 6);
-    this.scoreLabel.text = 'SCORE ' + scoreFormated;
+    this.scoreLabel.text = 'SCORE: ' + scoreFormated;
     this.explosionSound.play();
   }
 

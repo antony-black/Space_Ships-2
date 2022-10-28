@@ -1,3 +1,5 @@
+// The right gun for 'player2'
+
 class BeamDouble2 extends Phaser.GameObjects.Sprite {
   constructor(scene){
     let x = scene.player2.x - 20;

@@ -1,3 +1,4 @@
+// The left gun for 'player2'
 class Beam2 extends Phaser.GameObjects.Sprite {
   constructor(scene){
     let x = scene.player2.x + 20;
