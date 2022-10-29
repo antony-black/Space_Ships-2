@@ -7,6 +7,8 @@ class Scene2 extends Phaser.Scene {
   }
 
   create() {
+    this.key_G = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+
     this.background = this.add.tileSprite(0, 0, config.width, config.height,'background');
     this.background.setOrigin(0, 0);
 
@@ -195,6 +197,10 @@ class Scene2 extends Phaser.Scene {
   }
 
   update() {
+    if (this.key_G.isDown) {
+      this.scene.start('GameOver');
+    }
+
     this.moveShip(this.ship1, 1);
     this.moveShip(this.ship2, 2);
     this.moveShip(this.ship3, 3);
@@ -373,7 +379,7 @@ class Scene2 extends Phaser.Scene {
      // 'player' disabled
      this.resetCounter ++;
 
-     if (this.resetCounter !== 2) {
+     if (this.resetCounter !== 4) {
        console.log('OK');
 
        let x = config.width / 2 + 300;
@@ -408,7 +414,7 @@ class Scene2 extends Phaser.Scene {
      // 'player' disabled
      this.resetCounter2 ++;
 
-     if (this.resetCounter2 !== 2) {
+     if (this.resetCounter2 !== 4) {
        console.log('OK');
 
        let x = config.width / 2 - 300;
@@ -469,9 +475,11 @@ class Scene2 extends Phaser.Scene {
   }  
   // Run 'GameOver'
   setGameOver() {
-    if (this.resetCounter && this.resetCounter2 === 2) {
+    if (this.resetCounter && this.resetCounter2 === 4) {
       console.log('setGameOver >>> working');
       this.scene.start('GameOver');
+      this.resetCounter = 0;
+      this.resetCounter2 = 0;
     }
   }
 }

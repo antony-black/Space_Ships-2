@@ -3,23 +3,19 @@ class GameOver extends Phaser.Scene {
     super('GameOver');
   }
 
-  // preload() {
-  //   this.load.image('gameOver', 'assets/game-over.png');
-  // }
-
   create() {
     console.log('CREATE GameOver >>>');
     this.gameOver = this.add.tileSprite(0, 0, config.width, config.height, 'gameOver');
     this.gameOver.setOrigin(0, 0);
-  }
-
-  update() {
-    this.restart();
-  }
-
-  restart() {
-    setTimeout(() => {
+    this.input.once('pointerdown', function() {
+      console.log('From GameOver to playScene');
       this.scene.start('playGame');
-    }, 3000);
+    }, this);
   }
+
+  // restart() {
+  //   setTimeout(() => {
+  //     this.scene.start('playGame');
+  //   }, 3000);
+  // }
 }
