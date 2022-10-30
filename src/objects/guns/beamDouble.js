@@ -1,5 +1,5 @@
 
-// The right gun for 'player'
+// The left gun for 'player'
 class BeamDouble extends Phaser.GameObjects.Sprite {
   constructor(scene){
     let x = scene.player.x - 20;
@@ -8,7 +8,7 @@ class BeamDouble extends Phaser.GameObjects.Sprite {
     super(scene, x, y, "beam");
     scene.add.existing(this);
 
-    this.play('beam_anim');
+    // this.play('beam_anim');
     scene.physics.world.enableBody(this);
     this.body.velocity.y = -850;
 

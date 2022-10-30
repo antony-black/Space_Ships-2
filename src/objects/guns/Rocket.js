@@ -1,10 +1,10 @@
 // The right gun for 'player'
-class Beam extends Phaser.GameObjects.Sprite {
+class Rocket extends Phaser.GameObjects.Sprite {
     constructor(scene){
-      let x = scene.player.x + 20;
-      let y = scene.player.y - 16;
+      let x = scene.player.x;
+      let y = scene.player.y - 50;
 
-      super(scene, x, y, 'beam');
+      super(scene, x, y, 'rocket');
       scene.add.existing(this);
 
       // this.play('beam_anim');

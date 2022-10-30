@@ -8,11 +8,15 @@ class Scene2 extends Phaser.Scene {
 
   create() {
     this.key_G = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+    this.key_P = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
     this.background = this.add.tileSprite(0, 0, config.width, config.height,'background');
-    this.background.setOrigin(0, 0);
+    this.background.setOrigin(0, 0);   
 
-    // this.add.text(20, 20, 'Playing game ...', { font: '25px Arial', fill: 'yellow' });
+    // this.bullets = this.physics.add.image(0, 0, 'beam');
+ 
+    // this.bullets2 = this.physics.add.image(0, 0, 'beam2');
+
 
     const WIDTH = this.renderer.width;
     const HEIGHT = this.renderer.height;
@@ -23,16 +27,16 @@ class Scene2 extends Phaser.Scene {
     // ]
 
 // !Create a loop
-    this.ship1 = this.add.sprite(WIDTH/2, HEIGHT/2, 'ship');
-    this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT/2, 'ship2');
-    this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT/2, 'ship3');
-    this.ship4 = this.add.sprite(WIDTH/2 + 80, HEIGHT/2, 'ship4');
-    this.ship5 = this.add.sprite(WIDTH/2 - 150, HEIGHT/2, 'ship5');
-    this.ship6 = this.add.sprite(WIDTH/2 + 150, HEIGHT/2, 'ship6');
-    this.ship7 = this.add.sprite(WIDTH/2 - 120, HEIGHT/2, 'ship7');
-    this.ship8 = this.add.sprite(WIDTH/2 - 250, HEIGHT/2, 'ship8');
-    this.ship9 = this.add.sprite(WIDTH/2 + 250, HEIGHT/2, 'ship9');
-    this.ship10 = this.add.sprite(WIDTH/2 + 400, HEIGHT/2, 'ship10');
+    this.ship1 = this.add.sprite(WIDTH/2, HEIGHT * 0, 'ship');
+    this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT * 0, 'ship2');
+    this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT * 0, 'ship3');
+    this.ship4 = this.add.sprite(WIDTH/2 + 80, HEIGHT * 0, 'ship4');
+    this.ship5 = this.add.sprite(WIDTH/2 - 150, HEIGHT * 0, 'ship5');
+    this.ship6 = this.add.sprite(WIDTH/2 + 150, HEIGHT * 0, 'ship6');
+    this.ship7 = this.add.sprite(WIDTH/2 - 120, HEIGHT * 0, 'ship7');
+    this.ship8 = this.add.sprite(WIDTH/2 - 250, HEIGHT * 0, 'ship8');
+    this.ship9 = this.add.sprite(WIDTH/2 + 250, HEIGHT * 0, 'ship9');
+    this.ship10 = this.add.sprite(WIDTH/2 + 400, HEIGHT * 0, 'ship10');
 
     // !Create a loop
     // scale enemies
@@ -105,8 +109,9 @@ class Scene2 extends Phaser.Scene {
     } 
     // The first player settings
     this.player = this.physics.add.sprite(WIDTH/2 + 300, HEIGHT/2 + 300, 'player');
-    this.player.setScale(2.5);
-    this.player.play('thrust');
+    this.player.setAngle(-90);
+    // this.player.setScale(2.5);
+    // this.player.play('thrust');
 
     // Keyboard settings 'player'
     this.cursorKeys = this.input.keyboard.createCursorKeys();
@@ -115,8 +120,9 @@ class Scene2 extends Phaser.Scene {
  
     // The second player settings
     this.player2 = this.physics.add.sprite(WIDTH/2 - 300, HEIGHT/2 + 300, 'player')
-    this.player2.setScale(2.5);
-    this.player2.play('thrust');
+    this.player2.setAngle(-90);
+    // this.player2.setScale(2.5);
+    // this.player2.play('thrust');
     this.player2.setBounce(0.5);
     this.player2.setCollideWorldBounds(true);
 
@@ -132,12 +138,18 @@ class Scene2 extends Phaser.Scene {
 
     // Fire button 'player'
     this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
     // Fire button 'player2'
     this.key_ALT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ALT);
-
+    // Fire rocket 'player'
+    this.key_B = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
+    // Fire rocket 'player2'
+    this.key_SHIFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+   
     //Missiles group
     this.missiles = this.add.group();
+    // Rockets group
+    // Hold all the 'rocket' instances
+    this.rockets = this.add.group();
 
     // The first player overlaps
     this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, null, this);
@@ -151,9 +163,15 @@ class Scene2 extends Phaser.Scene {
      this.physics.add.collider(this.missiles, this.powerUps, function (missile, powerUp) {
       missile.destroy();
     });
+    // Destroy rockets by powerUps
+     this.physics.add.collider(this.rockets, this.powerUps, function (rocket, powerUp) {
+      rocket.destroy();
+    });
     
     // Missiles destroy enemies
     this.physics.add.overlap(this.missiles, this.enemies, this.hitEnemies, null, this);
+    // Rockets destroy enemies
+    this.physics.add.overlap(this.rockets, this.enemies, this.hitEnemiesByRocket, null, this);
 
     // Add 'SCORE'
     let graphics = this.add.graphics();
@@ -169,13 +187,10 @@ class Scene2 extends Phaser.Scene {
     this.score = 0;
     this.livesPlayer = 4;
     this.livesPlayer2 = 4;
-    // this.livesPlayer3 = 4;
-
     this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE: 0', 32);
     this.livesText = this.add.bitmapText(10, 45, 'pixelFont', 'LIVES:', 32);
     this.livesLabel = this.add.bitmapText(10, 75, 'pixelFont', 'PLAYER-1: 4', 32);
     this.livesLabel2 = this.add.bitmapText(10, 105, 'pixelFont', 'PLAYER-2: 4', 32);
-    // this.livesLabel3 = this.add.bitmapText(10, 85, 'pixelFont', 'PLAYER-3: 4', 32);
 
     // Add sounds
     this.beamSound = this.sound.add('audio_beam');
@@ -194,11 +209,19 @@ class Scene2 extends Phaser.Scene {
       delay: 0
     }
     this.music.play(musicConfig);
+
+    // this.scale.on(Phaser.Scale.Events.RESIZE, () => {
+    //   this.background.setSize(this.renderer.width, this.renderer.height);
+    // });
   }
 
   update() {
     if (this.key_G.isDown) {
       this.scene.start('GameOver');
+    }
+
+    if (this.key_P.isDown) {
+      this.scene.start('Pause');
     }
 
     this.moveShip(this.ship1, 1);
@@ -214,17 +237,21 @@ class Scene2 extends Phaser.Scene {
 
 
     this.background.tilePositionY -= 0.5;
-
-    this.movePlayermanager();
-
-    this.movePlayermanagerAlternative();
-
+    
+    // Keyboard 'player'
+    this.movePlayerManager();
+    // Keyboard 'player2'
+    this.movePlayerManagerAlternative();
   // Fire function 'player'
     this.getFire1();
   // Fire function 'player'
     this.getFire2();
-
-  this.setGameOver();
+  // Fire with the rocket 'player'
+    this.getFireRocket1();
+  // Fire with the rocket 'player2'
+    this.getFireRocket2()
+  // Start 'GameOver' scene
+    this.setGameOver();
   }
 
   resetShipPos(ship) {
@@ -245,37 +272,70 @@ class Scene2 extends Phaser.Scene {
     gameObject.play('explode');
   }
 
-// Keyboard settings 'player'
-  movePlayermanager() {
-    if(this.cursorKeys.left.isDown) {
-      this.player.setVelocityX(-gameSettings.playerSpeed);
-    } else if(this.cursorKeys.right.isDown) {
-      this.player.setVelocityX(gameSettings.playerSpeed);
-    } else if(this.cursorKeys.up.isDown) {
-      this.player.setVelocityY(-gameSettings.playerSpeed);
-    }else if(this.cursorKeys.down.isDown) {
-      this.player.setVelocityY(gameSettings.playerSpeed);
-    } else {
-      this.player.setVelocity(0);
-    }
+  // Keyboard settings 'player'
+movePlayerManager() {
+  if(this.cursorKeys.left.isDown) {
+    this.player.setVelocityX(-gameSettings.playerSpeed);
+  } else if(this.cursorKeys.right.isDown) {
+    this.player.setVelocityX(gameSettings.playerSpeed);
+  } else if(this.cursorKeys.up.isDown) {
+    this.player.setVelocityY(-gameSettings.playerSpeed);
+  }else if(this.cursorKeys.down.isDown) {
+    this.player.setVelocityY(gameSettings.playerSpeed);
+  } else {
+    this.player.setVelocity(0);
   }
-   // Fire settings 'player'
-    // 'JustDown' it's event
-    getFire1(){
-      if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-        // call a function to create a beam instance
-        // this.shootBeam();
-        if(this.player.active) {
-          this.shootBeam();
-        }
-        for (let i = 0; i < this.missiles.getChildren().length; i++) {
-          let beam = this.missiles.getChildren()[i];
-          beam.update();
-        }
+}
+ // Fire settings 'player'
+  // 'JustDown' it's event
+  getFire1(){
+    if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+      // call a function to create a beam instance
+      // this.shootBeam();
+      if(this.player.active) {  
+        this.shootBeam();
+      }
+      for (let i = 0; i < this.missiles.getChildren().length; i++) {
+        let beam = this.missiles.getChildren()[i];
+        beam.update();
+      }
+  }
+  }
+
+  // 'player' fire function
+  shootBeam(){
+    // add the beam to the group
+    console.log('Fire');
+    const beam = new Beam(this);
+    const beamDouble = new BeamDouble(this);
+    this.beamSound.play();  
+  }
+
+  getFireRocket1(){
+    if (Phaser.Input.Keyboard.JustDown(this.key_B)) {
+      console.log('B >>>');
+      if (this.player.active) {
+        console.log('active >>>');
+        this.shootRocket1();
+      }
+      for (let i = 0; i < this.rockets.getChildren().length; i++) {
+        let rocket = this.rockets.getChildren()[i];
+        // Run the update for each 'rocket'
+        rocket.update();
+      }
     }
-    }
+   }
+
+   shootRocket1(){
+    // add the rocket to the group
+    console.log('Fire-Rocket');
+
+    const beamThree = new Rocket(this);
+    this.beamSound.play();
+  }
+
 // Keyboard settings 'player2'
-  movePlayermanagerAlternative() {
+  movePlayerManagerAlternative() {
     if(this.key_W.isDown) {
       this.player2.setVelocityY(-gameSettings.playerSpeed);
     }
@@ -304,20 +364,31 @@ class Scene2 extends Phaser.Scene {
       }
     }
    }
-// 'player' fire function
-  shootBeam(){
-    // add the beam to the group
-    console.log('Fire');
-    const beam = new Beam(this);
-    const beamDouble = new BeamDouble(this);
-    this.beamSound.play();  
-  }
-// 'player2' fire function
+   // 'player2' fire function
   shootBeam2(){
     // add the beam to the group
     console.log('Fire2');
     const beam2 = new Beam2(this);
     const beamDouble2 = new BeamDouble2(this);
+    this.beamSound.play();  
+  }
+
+   getFireRocket2(){
+    if (Phaser.Input.Keyboard.JustDown(this.key_SHIFT)) {
+      if (this.player2.active) {
+        this.shootRocket2();
+      }
+      for (let i = 0; i < this.rockets.getChildren().length; i++) {
+        let rocket2 = this.rockets.getChildren()[i];
+        rocket2.update();
+      }
+    }
+   }
+
+   shootRocket2(){
+    // add the beam to the group
+    console.log('Fire-Rocket-2');
+    const rocket2 = new Rocket2(this);
     this.beamSound.play();  
   }
 
@@ -395,7 +466,7 @@ class Scene2 extends Phaser.Scene {
          targets:this.player,
          y: config.height - 64,
          ease: 'Power1',
-         duration: 1500,
+         duration: 500,
          repeat: 0,
          onComplete: function() {
            this.player.alpha = 1;
@@ -448,6 +519,19 @@ class Scene2 extends Phaser.Scene {
     const explosion = new Explosion(this, enemy.x, enemy.y);
 
     missile.destroy();
+    this.resetShipPos(enemy);
+
+    this.score += 15;
+    // this.scoreLabel.text = 'SCORE ' + this.score;
+    const scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel.text = 'SCORE: ' + scoreFormated;
+    this.explosionSound.play();
+  }
+
+  hitEnemiesByRocket(rocket, enemy) {
+    const explosion = new Explosion(this, enemy.x, enemy.y);
+
+    rocket.destroy();
     this.resetShipPos(enemy);
 
     this.score += 15;

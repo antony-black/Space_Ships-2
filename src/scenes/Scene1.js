@@ -6,7 +6,15 @@ class Scene1 extends Phaser.Scene {
   preload() {
     this.load.image('background', 'assets/background-3.png');
     // 'GameOver' background
-    this.load.image('gameOver', 'assets/game-over-3.png');
+    this.load.image('gameOver', 'assets/game-over.png');
+
+    this.load.image('player', 'assets/THE-SHIP.png');
+
+    this.load.image('beam', 'assets/bullet5.png');
+    this.load.image('beam2', 'assets/bullet4.png');
+    this.load.image('rocket', 'assets/bullet10.png');
+
+    this.load.image('mine', 'assets/mine.png')
 
     this.load.spritesheet('ship', 'assets/spritesheets/ship.png', {
       frameWidth: 16,
@@ -65,15 +73,17 @@ class Scene1 extends Phaser.Scene {
       frameHeight: 16
     });
 
-    this.load.spritesheet('player', 'assets/spritesheets/player.png', {
-      frameWidth: 16,
-      frameHeight: 24
-    });
+    // this.load.spritesheet('player', 'assets/spritesheets/THE-SHIP.png', {
+    //   frameWidth: 16,
+    //   frameHeight: 24
+    // });
 
-    this.load.spritesheet('beam', 'assets/spritesheets/beam.png', {
-      frameWidth: 16,
-      frameHeight: 16
-    });
+    // this.load.spritesheet('beam', 'assets/spritesheets/beam.png', {
+    //   frameWidth: 16,
+    //   frameHeight: 16
+    // });
+
+
 
     this.load.bitmapFont("pixelFont", "assets/font/font.png", "assets/font/font.xml");
 
@@ -84,9 +94,9 @@ class Scene1 extends Phaser.Scene {
   }
 
   create() {
-    this.add.text(20, 20, "Loading game...");
+    // this.loadingText = this.add.bitmapText(200, 200, 'pixelFont', 'Loading game...', 32);
+    
     this.scene.start("playGame");
-
     this.anims.create({
       key: 'ship1_anim',
       frames: this.anims.generateFrameNumbers('ship'),
@@ -178,19 +188,19 @@ class Scene1 extends Phaser.Scene {
       repeat: -1
     });
 
-    this.anims.create({
-      key: 'thrust',
-      frames: this.anims.generateFrameNumbers('player'),
-      frameRate: 20,
-      repeat: -1
-    });
+    // this.anims.create({
+    //   key: 'thrust',
+    //   frames: this.anims.generateFrameNumbers('player'),
+    //   frameRate: 20,
+    //   repeat: -1
+    // });
 
-    this.anims.create({
-      key:'beam_anim',
-      frames: this.anims.generateFrameNumbers('beam'),
-      frameRate: 20,
-      repeat: -1
-    });
+    // this.anims.create({
+    //   key:'beam_anim',
+    //   frames: this.anims.generateFrameNumbers('beam'),
+    //   frameRate: 20,
+    //   repeat: -1
+    // });
   }
 }
 

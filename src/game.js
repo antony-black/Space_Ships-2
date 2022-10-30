@@ -5,8 +5,13 @@ const gameSettings = {
 const config = {
   width: innerWidth,
   height: innerHeight,
-  backgroundColor: 0xff0000,
-  scene: [Scene1, Scene2, GameOver],
+  // scale: { 
+  //   mode: Phaser.Scale.ScaleModes.RESIZE,
+  //   width: innerWidth,
+  //   height: innerHeight,
+  //  },
+  backgroundColor: 0x000000,
+  scene: [Scene1, Scene2, GameOver, Pause],
   pixelArt: true,
   physics: {
     default: 'arcade',
