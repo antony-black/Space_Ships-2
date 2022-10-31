@@ -18,12 +18,12 @@ const config = {
     arcade: {
       debug: false
     }
-  }
+  },
 }
 
-window.addEventListener('resize', () => {
-  window.location.reload();
-})
+// window.addEventListener('resize', () => {
+//   window.location.reload();
+// })
 
 
 

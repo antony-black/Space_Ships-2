@@ -10,13 +10,9 @@ class Scene2 extends Phaser.Scene {
     this.key_G = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
     this.key_P = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
+
     this.background = this.add.tileSprite(0, 0, config.width, config.height,'background');
-    this.background.setOrigin(0, 0);   
-
-    // this.bullets = this.physics.add.image(0, 0, 'beam');
- 
-    // this.bullets2 = this.physics.add.image(0, 0, 'beam2');
-
+    this.background.setOrigin(0, 0);    
 
     const WIDTH = this.renderer.width;
     const HEIGHT = this.renderer.height;
@@ -38,8 +34,7 @@ class Scene2 extends Phaser.Scene {
     this.ship9 = this.add.sprite(WIDTH/2 + 250, HEIGHT * 0, 'ship9');
     this.ship10 = this.add.sprite(WIDTH/2 + 400, HEIGHT * 0, 'ship10');
 
-    // !Create a loop
-    // scale enemies
+    // Scale enemies
     this.ship1.setScale(2.5);
     this.ship2.setScale(2.5);
     this.ship3.setScale(2);
@@ -47,20 +42,9 @@ class Scene2 extends Phaser.Scene {
     this.ship5.setScale(1.5);
     this.ship6.setScale(1.5);
 
-    // !Create a loop
-    this.enemies = this.physics.add.group();
-    this.enemies.add(this.ship1);
-    this.enemies.add(this.ship2);
-    this.enemies.add(this.ship3);
-    this.enemies.add(this.ship4);
-    this.enemies.add(this.ship5);
-    this.enemies.add(this.ship6);
-    this.enemies.add(this.ship7);
-    this.enemies.add(this.ship8);
-    this.enemies.add(this.ship9);
-    this.enemies.add(this.ship10);
+    // Add enemies to the group
+    this.createEnemies();
 
-    // !Create a loop
     // run animations
     this.ship1.play('ship1_anim');
     this.ship2.play('ship2_anim');
@@ -72,41 +56,28 @@ class Scene2 extends Phaser.Scene {
     this.ship8.play('ship8_anim');
     this.ship9.play('ship9_anim');
     this.ship10.play('ship10_anim');
+    
+    // Set setInteractive() method
+    const shipList = [
+      this.ship1, this.ship2, this.ship3, this.ship4, this.ship5, 
+      this.ship6, this.ship7, this.ship8, this.ship9, this.ship10
+    ]
+    for (let i = 0; i < shipList.length; i++) {
+      shipList[i].setInteractive();
+    }
 
-    // !Create a loop
-    this.ship1.setInteractive();
-    this.ship2.setInteractive();
-    this.ship3.setInteractive();
-    this.ship4.setInteractive();
-    this.ship5.setInteractive();
-    this.ship6.setInteractive();
-    this.ship7.setInteractive();
-    this.ship8.setInteractive();
-    this.ship9.setInteractive();
-    this.ship10.setInteractive();
     // event on 'ships'/explosion
     this.input.on('gameobjectdown', this.destroyShip, this);
 
     this.physics.world.setBoundsCollision();
-    this.powerUps = this.physics.add.group();
-    // Add multiple objects
-    let maxObjects = 4;
-    for (let i = 0; i <= maxObjects; i++) {
-      let powerUp = this.physics.add.sprite(16, 16, 'power-up');
-      // add 'power-up' to 'group'
-      this.powerUps.add(powerUp);
-      // puts each one at random position
-      powerUp.setRandomPosition(0, 0, game.config.width, game.config.height);
-        // set random animation
-     if (Math.random() > 0.5) {
-      powerUp.play("red");
-    } else {
-      powerUp.play("gray");
-    }
-    powerUp.setVelocity(100, 100);
-    powerUp.setCollideWorldBounds(true);
-    powerUp.setBounce(1);
-    } 
+
+    this.createMines();
+
+    this.createPowerUps();
+
+    this.createAsteroids1();
+    this.createAsteroids2();
+
     // The first player settings
     this.player = this.physics.add.sprite(WIDTH/2 + 300, HEIGHT/2 + 300, 'player');
     this.player.setAngle(-90);
@@ -119,7 +90,7 @@ class Scene2 extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
  
     // The second player settings
-    this.player2 = this.physics.add.sprite(WIDTH/2 - 300, HEIGHT/2 + 300, 'player')
+    this.player2 = this.physics.add.sprite(WIDTH/2 - 300, HEIGHT/2 + 300, 'player');
     this.player2.setAngle(-90);
     // this.player2.setScale(2.5);
     // this.player2.play('thrust');
@@ -154,10 +125,14 @@ class Scene2 extends Phaser.Scene {
     // The first player overlaps
     this.physics.add.overlap(this.player, this.powerUps, this.pickPowerUp, null, this);
     this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, null, this);
+    this.physics.add.overlap(this.player, this.mines, this.hurtPlayerByMine, null, this);
+    this.physics.add.overlap(this.player, this.asteroids1, this.hurtPlayerByAsteroid, null, this);
 
     // The second player overlaps
     this.physics.add.overlap(this.player2, this.powerUps, this.pickPowerUp, null, this);
     this.physics.add.overlap(this.player2, this.enemies, this.hurtPlayer2, null, this);
+    this.physics.add.overlap(this.player2, this.mines, this.hurtPlayerByMine2, null, this);
+    this.physics.add.overlap(this.player2, this.asteroids1, this.hurtPlayerByAsteroid2, null, this);
 
      // Destroy missiles by powerUps
      this.physics.add.collider(this.missiles, this.powerUps, function (missile, powerUp) {
@@ -167,11 +142,25 @@ class Scene2 extends Phaser.Scene {
      this.physics.add.collider(this.rockets, this.powerUps, function (rocket, powerUp) {
       rocket.destroy();
     });
+      // Destroy mines by powerUps
+      this.physics.add.collider(this.mines, this.powerUps, function (mine, powerUp) {
+        mine.destroy();
+      });
     
     // Missiles destroy enemies
     this.physics.add.overlap(this.missiles, this.enemies, this.hitEnemies, null, this);
-    // Rockets destroy enemies
-    this.physics.add.overlap(this.rockets, this.enemies, this.hitEnemiesByRocket, null, this);
+    // Missiles destroy mines
+    this.physics.add.overlap(this.missiles, this.mines, this.hitMines, null, this);
+    // Missile destroy 'asteroids1'
+    this.physics.add.overlap(this.missiles, this.asteroids1, this.hitAsteroids, null, this);
+
+    // // Mines destroy enemies
+    // this.physics.add.overlap(this.mines, this.enemies, this.minesHitEnemies, null, this);
+    // // Mines destroy asteroids
+    // this.physics.add.overlap(this.mines, this.asteroids1, this.minesHitAsteroids, null, this);
+    // // Asteroids destroy enemies
+    // this.physics.add.overlap(this.asteroids1, this.enemies, this.asteroidsHitEnemies, null, this);
+
 
     // Add 'SCORE'
     let graphics = this.add.graphics();
@@ -234,8 +223,7 @@ class Scene2 extends Phaser.Scene {
     this.moveShip(this.ship8, 1);
     this.moveShip(this.ship9, 2);
     this.moveShip(this.ship10, 3);
-
-
+     
     this.background.tilePositionY -= 0.5;
     
     // Keyboard 'player'
@@ -249,15 +237,128 @@ class Scene2 extends Phaser.Scene {
   // Fire with the rocket 'player'
     this.getFireRocket1();
   // Fire with the rocket 'player2'
-    this.getFireRocket2()
+    this.getFireRocket2();
   // Start 'GameOver' scene
     this.setGameOver();
   }
+
+  createEnemies() {
+    this.enemies = this.physics.add.group();
+    const enemyList2 = [
+      this.ship1, this.ship2, this.ship3, this.ship4, this.ship5, 
+      this.ship6, this.ship7, this.ship8, this.ship9, this.ship10
+    ]
+    for (let i = 0; i < enemyList2.length; i++) {
+      this.enemies.add(enemyList2[i]);
+    }
+  }
+
+   createAsteroids1(){
+    this.asteroids1 = this.physics.add.group();
+    let asteroidNumber = 3;
+    for (let i = 0; i <= asteroidNumber; i++) {
+      let asteroid = this.physics.add.image(0, 0, 'asteroid1');
+      this.asteroids1.add(asteroid);
+      
+      asteroid.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
+      asteroid.setVelocity(Math.random() * 100, Math.random() * 100);
+      asteroid.setCollideWorldBounds(true);
+      asteroid.setBounce(0.5);
+
+      const tw = this.tweens.add({
+        targets: asteroid,
+        angle: 5000,
+        duration: 60000,
+        ease: 'Sine.easeOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    }
+   }
+   createAsteroids2(){
+    this.asteroids2 = this.physics.add.group();
+    let asteroidNumber = 3;
+    for (let i = 0; i <= asteroidNumber; i++) {
+      let asteroid = this.physics.add.image(0, 0, 'asteroid2');
+      this.asteroids1.add(asteroid);
+      
+      asteroid.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
+      asteroid.setVelocity(Math.random() * 100, Math.random() * 100);
+      asteroid.setCollideWorldBounds(true);
+      asteroid.setBounce(0.5);
+
+      const tw = this.tweens.add({
+        targets: asteroid,
+        angle: -5000,
+        duration: 60000,
+        ease: 'Sine.easeOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    }
+   }
+
+   createMines(){
+    this.mines = this.physics.add.group();
+    let mineNumber = 4;
+    for (let i = 0; i <= mineNumber; i++) {
+      let mine = this.physics.add.image(0, 0, 'mine');
+      this.mines.add(mine);
+      
+      mine.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
+      mine.setVelocity(Math.random() * 100, Math.random() * 100);
+      mine.setCollideWorldBounds(true);
+      mine.setBounce(0.5);
+
+      const tw = this.tweens.add({
+        targets: mine,
+        angle: 5000,
+        duration: 60000,
+        ease: 'Sine.easeOut',
+        yoyo: true,
+        repeat: -1,
+      });
+    }
+   }
+
+   createPowerUps() {
+    this.powerUps = this.physics.add.group();
+    // Add multiple objects
+    let maxObjects = 4;
+    for (let i = 0; i <= maxObjects; i++) {
+      let powerUp = this.physics.add.sprite(16, 16, 'power-up');
+      // add 'power-up' to 'group'
+      this.powerUps.add(powerUp);
+      // puts each one at random position
+      powerUp.setRandomPosition(0, 0, game.config.width, game.config.height);
+        // set random animation
+     if (Math.random() > 0.5) {
+      powerUp.play("red");
+    } else {
+      powerUp.play("gray");
+    }
+    powerUp.setVelocity(100, 100);
+    powerUp.setCollideWorldBounds(true);
+    powerUp.setBounce(0.5);
+    } 
+   }
 
   resetShipPos(ship) {
     ship.y = 0;
     let randomX = Phaser.Math.Between(0, config.width);
     ship.x = randomX;
+  }
+
+  resetMinePos(mine) {
+    mine.y = 0;
+    mine.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
+    mine.setVelocity(Math.random() * 100, Math.random() * 100);
+  }
+
+  resetAsteroidPos(asteroid) {
+    asteroid.y = 0;
+    asteroid.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
+    asteroid.setVelocity(Math.random() * 100, Math.random() * 100);
   }
 
   moveShip(ship, speed) {
@@ -273,7 +374,7 @@ class Scene2 extends Phaser.Scene {
   }
 
   // Keyboard settings 'player'
-movePlayerManager() {
+  movePlayerManager() {
   if(this.cursorKeys.left.isDown) {
     this.player.setVelocityX(-gameSettings.playerSpeed);
   } else if(this.cursorKeys.right.isDown) {
@@ -422,6 +523,89 @@ movePlayerManager() {
     // 'player' lives
     this.getLives();
   }
+  // 'player' demage by 'mine'
+  hurtPlayerByMine(player, mine) {
+    this.explosionSound.play();
+
+    this.resetMinePos(mine);
+    // don't hurt 'player' if it is invisible
+    if(this.player.alpha < 1) {
+      return
+    } 
+    // run an explosion animation
+    const explosion = new Explosion(this, player.x, player.y);
+    // disables 'player' & hide it
+    player.disableBody(true, true);
+    // this.resetPlayer();
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer,
+      callbackScope: this,
+      loop: false
+    });
+
+    // 'player' lives
+    this.getLives();
+  }
+  // 'player' demage by 'asteroid1'
+  hurtPlayerByAsteroid(player, asteroid) {
+    console.log('ASTEROID >>>');
+    this.explosionSound.play();
+
+    this.resetAsteroidPos(asteroid);
+    // don't hurt 'player' if it is invisible
+    if(this.player.alpha < 1) {
+      return
+    } 
+    // run an explosion animation
+    const explosion = new Explosion(this, player.x, player.y);
+    // disables 'player' & hide it
+    player.disableBody(true, true);
+    // this.resetPlayer();
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer,
+      callbackScope: this,
+      loop: false
+    });
+
+    // 'player' lives
+    this.getLives();
+  }
+  // Restart 'player'
+  resetPlayer() {
+    // 'player' disabled
+    this.resetCounter ++;
+
+    if (this.resetCounter !== 4) {
+      console.log('OK');
+
+      let x = config.width / 2 + 300;
+      let y = config.height + 64;
+  
+      this.player.enableBody(true, x, y, true, true);
+  
+      // makes 'player' transparent
+      this.player.alpha = 0.5;
+  
+      // move the ship from outside the screen to its original position
+      const tween = this.tweens.add({
+        targets:this.player,
+        y: config.height - 64,
+        ease: 'Power1',
+        duration: 500,
+        repeat: 0,
+        onComplete: function() {
+          this.player.alpha = 1;
+        },
+        callbackScope: this
+      });
+
+    } else {
+     console.log('GameOver');
+     return;
+    }
+ }
 // 'player2' demage
   hurtPlayer2(player, enemy) {
     this.explosionSound.play();
@@ -444,42 +628,52 @@ movePlayerManager() {
       // 'player2' lives
        this.getLives2();
   }
-
-  // Restart 'player'
-  resetPlayer() {
-     // 'player' disabled
-     this.resetCounter ++;
-
-     if (this.resetCounter !== 4) {
-       console.log('OK');
-
-       let x = config.width / 2 + 300;
-       let y = config.height + 64;
-   
-       this.player.enableBody(true, x, y, true, true);
-   
-       // makes 'player' transparent
-       this.player.alpha = 0.5;
-   
-       // move the ship from outside the screen to its original position
-       const tween = this.tweens.add({
-         targets:this.player,
-         y: config.height - 64,
-         ease: 'Power1',
-         duration: 500,
-         repeat: 0,
-         onComplete: function() {
-           this.player.alpha = 1;
-         },
-         callbackScope: this
-       });
-
-     } else {
-      console.log('GameOver');
-      return;
-     }
+  // 'player2' dabege by 'mine'w
+  hurtPlayerByMine2(player, mine) {
+    this.explosionSound.play();
+    this.resetMinePos(mine);
+    // don't hurt 'player' if it is invisible
+    if(this.player2.alpha < 1) {
+      return
+    } 
+    // run an explosion animation
+    const explosion = new Explosion(this, player.x, player.y);
+    // disables 'player' & hide it
+    player.disableBody(true, true);
+    // this.resetPlayer();
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer2,
+      callbackScope: this,
+      loop: false
+    });
+      // 'player2' lives
+       this.getLives2();
   }
+   // 'player2' demage by 'asteroid1'
+   hurtPlayerByAsteroid2(player, asteroid) {
+    this.explosionSound.play();
 
+    this.resetAsteroidPos(asteroid);
+    // don't hurt 'player' if it is invisible
+    if(this.player2.alpha < 1) {
+      return
+    } 
+    // run an explosion animation
+    const explosion = new Explosion(this, player.x, player.y);
+    // disables 'player' & hide it
+    player.disableBody(true, true);
+    // this.resetPlayer();
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.resetPlayer2,
+      callbackScope: this,
+      loop: false
+    });
+
+    // 'player' lives
+    this.getLives2();
+  }
  // Restart 'player2'
   resetPlayer2() {
      // 'player' disabled
@@ -516,6 +710,7 @@ movePlayerManager() {
   }
 
   hitEnemies(missile, enemy) {
+    console.log('HITENEMIES >>>');
     const explosion = new Explosion(this, enemy.x, enemy.y);
 
     missile.destroy();
@@ -528,19 +723,46 @@ movePlayerManager() {
     this.explosionSound.play();
   }
 
-  hitEnemiesByRocket(rocket, enemy) {
-    const explosion = new Explosion(this, enemy.x, enemy.y);
+  // minesHitEnemies(mine, enemy) {
+  //   console.log('HITENEMIES MINES >>>');
+  //   const explosion = new Explosion(this, enemy.x, enemy.y);
+  //   mine.destroy();
+  //   this.resetShipPos(enemy);
+  //   this.explosionSound.play();
+  // }
+  
+  // asteroidsHitEnemies(asteroid, enemy) {
+  //   console.log('asteroidsHitEnemies >>>');
+  //   const explosion = new Explosion(this, enemy.x, enemy.y);
+  //   mine.destroy();
+  //   this.resetShipPos(enemy);
+  //   this.explosionSound.play();
+  // }
 
-    rocket.destroy();
-    this.resetShipPos(enemy);
+  // minesHitAsteroids(mine, asteroid) {
+  //   console.log('HITasteroid MINES >>>');
+  //   const explosion = new Explosion(this, asteroid.x, asteroid.y);
+  //   mine.destroy();
+  //   this.resetAsteroidPos(asteroid);
+  //   this.explosionSound.play();
+  // }
 
-    this.score += 15;
-    // this.scoreLabel.text = 'SCORE ' + this.score;
-    const scoreFormated = this.zeroPad(this.score, 6);
-    this.scoreLabel.text = 'SCORE: ' + scoreFormated;
+  hitAsteroids(missile, asteroid) {
+    console.log('HITasteroidS >>>');
+    const explosion = new Explosion(this, asteroid.x, asteroid.y);
+
+    missile.destroy();
+    this.resetAsteroidPos(asteroid);
     this.explosionSound.play();
   }
 
+  hitMines(missile, mine) {
+    const explosion = new Explosion(this, mine.x, mine.y);
+    missile.destroy();
+    this.resetMinePos(mine);
+    this.explosionSound.play();
+  }
+  
   zeroPad(number, size) {
     let stringNumber = String(number);
     while(stringNumber.length < (size || 2)) {
@@ -564,6 +786,13 @@ movePlayerManager() {
       this.scene.start('GameOver');
       this.resetCounter = 0;
       this.resetCounter2 = 0;
+    }
+  }
+  // Run 'Pause'
+  setPause() {
+    if (this.key_P.isDown) {
+      console.log('setPause >>> working');
+      this.scene.start('Pause');
     }
   }
 }

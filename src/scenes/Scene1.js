@@ -13,8 +13,10 @@ class Scene1 extends Phaser.Scene {
     this.load.image('beam', 'assets/bullet5.png');
     this.load.image('beam2', 'assets/bullet4.png');
     this.load.image('rocket', 'assets/bullet10.png');
-
-    this.load.image('mine', 'assets/mine.png')
+    this.load.image('mine', 'assets/mine.png');
+    this.load.image('asteroid1', 'assets/asteroids/asteroid2.png');
+    this.load.image('asteroid2', 'assets/asteroids/asteroid3.png');
+    // this.load.image('asteroid3', 'assets/asteroids/asteroid4.png');
 
     this.load.spritesheet('ship', 'assets/spritesheets/ship.png', {
       frameWidth: 16,
