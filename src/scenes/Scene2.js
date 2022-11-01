@@ -22,7 +22,6 @@ class Scene2 extends Phaser.Scene {
     //   'ship6', 'ship7', 'ship8', 'ship9', 'ship10'
     // ]
 
-// !Create a loop
     this.ship1 = this.add.sprite(WIDTH/2, HEIGHT * 0, 'ship');
     this.ship2 = this.add.sprite(WIDTH/2 - 50, HEIGHT * 0, 'ship2');
     this.ship3 = this.add.sprite(WIDTH/2 + 50, HEIGHT * 0, 'ship3');
@@ -69,21 +68,11 @@ class Scene2 extends Phaser.Scene {
     // event on 'ships'/explosion
     this.input.on('gameobjectdown', this.destroyShip, this);
 
-    // this.physics.world.setBoundsCollision();
-
-    this.createMines();
-
-    this.createPowerUps();
-
-    this.createAsteroids1();
-    this.createAsteroids2();
+    this.physics.world.setBoundsCollision();
 
     // The first player settings
     this.player = this.physics.add.sprite(WIDTH/2 + 300, HEIGHT/2 + 300, 'player');
-    this.player.setAngle(-90);
-    // this.player.setScale(2.5);
-    // this.player.play('thrust');
-
+    this.player.play('thrust');
     // Keyboard settings 'player'
     this.cursorKeys = this.input.keyboard.createCursorKeys();
     this.player.setBounce(0.5);
@@ -91,9 +80,7 @@ class Scene2 extends Phaser.Scene {
  
     // The second player settings
     this.player2 = this.physics.add.sprite(WIDTH/2 - 300, HEIGHT/2 + 300, 'player');
-    this.player2.setAngle(-90);
-    // this.player2.setScale(2.5);
-    // this.player2.play('thrust');
+    this.player2.play('thrust');
     this.player2.setBounce(0.5);
     this.player2.setCollideWorldBounds(true);
 
@@ -115,6 +102,11 @@ class Scene2 extends Phaser.Scene {
     this.key_B = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
     // Fire rocket 'player2'
     this.key_SHIFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+
+    this.createMines();
+    this.createPowerUps();
+    this.createAsteroids1();
+    this.createAsteroids2();
    
     //Missiles group
     this.missiles = this.add.group();
@@ -127,12 +119,14 @@ class Scene2 extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.enemies, this.hurtPlayer, null, this);
     this.physics.add.overlap(this.player, this.mines, this.hurtPlayerByMine, null, this);
     this.physics.add.overlap(this.player, this.asteroids1, this.hurtPlayerByAsteroid, null, this);
+    // this.physics.add.overlap(this.player, this.asteroids2, this.hurtPlayerByAsteroid2, null, this);
 
     // The second player overlaps
     this.physics.add.overlap(this.player2, this.powerUps, this.pickPowerUp, null, this);
     this.physics.add.overlap(this.player2, this.enemies, this.hurtPlayer2, null, this);
     this.physics.add.overlap(this.player2, this.mines, this.hurtPlayerByMine2, null, this);
-    this.physics.add.overlap(this.player2, this.asteroids1, this.hurtPlayerByAsteroid2, null, this);
+    this.physics.add.overlap(this.player2, this.asteroids1, this.hurtPlayerByAsteroid, null, this);
+    // this.physics.add.overlap(this.player2, this.asteroids2, this.hurtPlayerByAsteroid2, null, this);
 
      // Destroy missiles by powerUps
      this.physics.add.collider(this.missiles, this.powerUps, function (missile, powerUp) {
@@ -153,6 +147,7 @@ class Scene2 extends Phaser.Scene {
     this.physics.add.overlap(this.missiles, this.mines, this.hitMines, null, this);
     // Missile destroy 'asteroids1'
     this.physics.add.overlap(this.missiles, this.asteroids1, this.hitAsteroids, null, this);
+    this.physics.add.overlap(this.missiles, this.asteroids2, this.hitAsteroids, null, this);
 
     // // Mines destroy enemies
     // this.physics.add.overlap(this.mines, this.enemies, this.minesHitEnemies, null, this);
@@ -257,13 +252,14 @@ class Scene2 extends Phaser.Scene {
     this.asteroids1 = this.physics.add.group();
     let asteroidNumber = 3;
     for (let i = 0; i <= asteroidNumber; i++) {
-      let asteroid = this.physics.add.image(0, 0, 'asteroid1');
+      let asteroid = this.physics.add.sprite(0, 0, 'asteroid1');
       this.asteroids1.add(asteroid);
       
       asteroid.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
       asteroid.setVelocity(Math.random() * 100, Math.random() * 100);
       asteroid.setCollideWorldBounds(true);
       asteroid.setBounce(0.5);
+      asteroid.play('asteroid_play');
 
       const tw = this.tweens.add({
         targets: asteroid,
@@ -279,13 +275,14 @@ class Scene2 extends Phaser.Scene {
     this.asteroids2 = this.physics.add.group();
     let asteroidNumber = 3;
     for (let i = 0; i <= asteroidNumber; i++) {
-      let asteroid = this.physics.add.image(0, 0, 'asteroid2');
-      this.asteroids1.add(asteroid);
+      let asteroid = this.physics.add.sprite(0, 0, 'asteroid2');
+      this.asteroids2.add(asteroid);
       
       asteroid.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
       asteroid.setVelocity(Math.random() * 100, Math.random() * 100);
       asteroid.setCollideWorldBounds(true);
       asteroid.setBounce(0.5);
+      asteroid.play('asteroid2_play');
 
       const tw = this.tweens.add({
         targets: asteroid,
@@ -302,13 +299,14 @@ class Scene2 extends Phaser.Scene {
     this.mines = this.physics.add.group();
     let mineNumber = 4;
     for (let i = 0; i <= mineNumber; i++) {
-      let mine = this.physics.add.image(0, 0, 'mine');
+      let mine = this.physics.add.sprite(0, 0, 'mine');
       this.mines.add(mine);
       
       mine.setRandomPosition(0, 0, Math.random() * config.width, Math.random() * config.height);
       mine.setVelocity(Math.random() * 100, Math.random() * 100);
       mine.setCollideWorldBounds(true);
       mine.setBounce(0.5);
+      mine.play('mine_play');
 
       const tw = this.tweens.add({
         targets: mine,
@@ -473,7 +471,6 @@ class Scene2 extends Phaser.Scene {
     const beamDouble2 = new BeamDouble2(this);
     this.beamSound.play();  
   }
-
    getFireRocket2(){
     if (Phaser.Input.Keyboard.JustDown(this.key_SHIFT)) {
       if (this.player2.active) {

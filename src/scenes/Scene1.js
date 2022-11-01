@@ -4,18 +4,16 @@ class Scene1 extends Phaser.Scene {
   }
 
   preload() {
+
     this.load.image('background', 'assets/background-3.png');
     // 'GameOver' background
     this.load.image('gameOver', 'assets/game-over.png');
 
-    this.load.image('player', 'assets/THE-SHIP.png');
+    // this.load.image('player', 'assets/THE-SHIP.png');
 
     this.load.image('beam', 'assets/bullet5.png');
     this.load.image('beam2', 'assets/bullet4.png');
     this.load.image('rocket', 'assets/bullet10.png');
-    this.load.image('mine', 'assets/mine.png');
-    this.load.image('asteroid1', 'assets/asteroids/asteroid2.png');
-    this.load.image('asteroid2', 'assets/asteroids/asteroid3.png');
     // this.load.image('asteroid3', 'assets/asteroids/asteroid4.png');
 
     this.load.spritesheet('ship', 'assets/spritesheets/ship.png', {
@@ -75,10 +73,25 @@ class Scene1 extends Phaser.Scene {
       frameHeight: 16
     });
 
-    // this.load.spritesheet('player', 'assets/spritesheets/THE-SHIP.png', {
-    //   frameWidth: 16,
-    //   frameHeight: 24
-    // });
+    this.load.spritesheet('player', 'assets/spritesheets/newPlayer.png', {
+      frameWidth: 64,
+      frameHeight: 64
+    });
+
+    this.load.spritesheet('asteroid1', 'assets/spritesheets/asteroids.png', {
+      frameWidth: 32,
+      frameHeight: 32
+    });
+
+    this.load.spritesheet('asteroid2', 'assets/spritesheets/asteroids2.png', {
+      frameWidth: 32,
+      frameHeight: 32
+    });
+
+    this.load.spritesheet('mine', 'assets/spritesheets/mine.png', {
+      frameWidth: 32,
+      frameHeight: 32
+    });
 
     // this.load.spritesheet('beam', 'assets/spritesheets/beam.png', {
     //   frameWidth: 16,
@@ -190,12 +203,33 @@ class Scene1 extends Phaser.Scene {
       repeat: -1
     });
 
-    // this.anims.create({
-    //   key: 'thrust',
-    //   frames: this.anims.generateFrameNumbers('player'),
-    //   frameRate: 20,
-    //   repeat: -1
-    // });
+    this.anims.create({
+      key: 'thrust',
+      frames: this.anims.generateFrameNumbers('player'),
+      frameRate: 20,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'asteroid_play',
+      frames: this.anims.generateFrameNumbers('asteroid1'),
+      frameRate: 0.8,
+      repeat: 0
+    });
+
+    this.anims.create({
+      key: 'asteroid2_play',
+      frames: this.anims.generateFrameNumbers('asteroid2'),
+      frameRate: 0.8,
+      repeat: 0
+    });
+    
+    this.anims.create({
+      key: 'mine_play',
+      frames: this.anims.generateFrameNumbers('mine'),
+      frameRate: 3,
+      repeat: -1
+    });
 
     // this.anims.create({
     //   key:'beam_anim',
