@@ -69,7 +69,7 @@ class Scene2 extends Phaser.Scene {
     // event on 'ships'/explosion
     this.input.on('gameobjectdown', this.destroyShip, this);
 
-    this.physics.world.setBoundsCollision();
+    // this.physics.world.setBoundsCollision();
 
     this.createMines();
 
@@ -177,9 +177,9 @@ class Scene2 extends Phaser.Scene {
     this.livesPlayer = 4;
     this.livesPlayer2 = 4;
     this.scoreLabel = this.add.bitmapText(10, 5, 'pixelFont', 'SCORE: 0', 32);
-    this.livesText = this.add.bitmapText(10, 45, 'pixelFont', 'LIVES:', 32);
-    this.livesLabel = this.add.bitmapText(10, 75, 'pixelFont', 'PLAYER-1: 4', 32);
-    this.livesLabel2 = this.add.bitmapText(10, 105, 'pixelFont', 'PLAYER-2: 4', 32);
+    this.livesText = this.add.bitmapText(310, 5, 'pixelFont', 'LIVES:', 32);
+    this.livesLabel = this.add.bitmapText(1010, 5, 'pixelFont', 'PLAYER-1: 4', 32);
+    this.livesLabel2 = this.add.bitmapText(410, 5, 'pixelFont', 'PLAYER-2: 4', 32);
 
     // Add sounds
     this.beamSound = this.sound.add('audio_beam');
@@ -710,7 +710,6 @@ class Scene2 extends Phaser.Scene {
   }
 
   hitEnemies(missile, enemy) {
-    console.log('HITENEMIES >>>');
     const explosion = new Explosion(this, enemy.x, enemy.y);
 
     missile.destroy();
@@ -750,9 +749,13 @@ class Scene2 extends Phaser.Scene {
   hitAsteroids(missile, asteroid) {
     console.log('HITasteroidS >>>');
     const explosion = new Explosion(this, asteroid.x, asteroid.y);
-
     missile.destroy();
     this.resetAsteroidPos(asteroid);
+    this.score += 5;
+    // this.scoreLabel.text = 'SCORE ' + this.score;
+    const scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel.text = 'SCORE: ' + scoreFormated;
+
     this.explosionSound.play();
   }
 
@@ -760,6 +763,10 @@ class Scene2 extends Phaser.Scene {
     const explosion = new Explosion(this, mine.x, mine.y);
     missile.destroy();
     this.resetMinePos(mine);
+    this.score += 5;
+    // this.scoreLabel.text = 'SCORE ' + this.score;
+    const scoreFormated = this.zeroPad(this.score, 6);
+    this.scoreLabel.text = 'SCORE: ' + scoreFormated;
     this.explosionSound.play();
   }
   
